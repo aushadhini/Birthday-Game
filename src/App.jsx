@@ -8,6 +8,8 @@ import FinalSurprise from './components/FinalSurprise';
 import PhotoGallery from './components/PhotoGallery';
 import LoveNotesButton from './components/LoveNotesButton';
 import MusicToggleButton from './components/MusicToggleButton';
+import AmbientBackdrop from './components/AmbientBackdrop';
+import SecretLetter from './components/SecretLetter';
 import useCollectibles from './hooks/useCollectibles';
 
 /**
@@ -32,13 +34,17 @@ export default function App() {
 
   return (
     <div className="app-shell relative min-h-dvh text-rose-ink">
+      {/* Starfield, aurora, grain and vignette — one persistent atmosphere */}
+      <AmbientBackdrop />
+
       <AnimatePresence mode="wait">
         <motion.div
           key={screen}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.35 }}
+          className="relative z-10"
+          initial={{ opacity: 0, y: 14, filter: 'blur(6px)' }}
+          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          exit={{ opacity: 0, y: -10, filter: 'blur(6px)' }}
+          transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
         >
           {screen === SCREENS.PASSWORD && (
             <PasswordGate onUnlock={() => setScreen(SCREENS.WELCOME)} />
@@ -76,6 +82,9 @@ export default function App() {
       {/* Play/pause our song from any screen — the audio itself lives in
           MusicProvider, so it never stops when the screen changes. */}
       <MusicToggleButton />
+
+      {/* Easter egg: type their name anywhere, or long-press the corner ✦ */}
+      <SecretLetter />
 
       {/* Fixed floating surprise — available on every screen after unlock.
           The 29 collectibles themselves only float on Level 1. */}

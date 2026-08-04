@@ -87,10 +87,8 @@ photo: '/photos/first-meet.jpg'
 
 ### Add music
 
-Our song is **"Until I Found You" — Stephen Sanchez**.
-
-1. Place the mp3 at `public/music/until-i-found-you.mp3`  
-2. Or change `musicSrc` / `musicTitle` / `musicArtist` in `src/data/config.js`
+1. Place an mp3 at `public/music/romantic-song.mp3`  
+2. Or change `musicSrc` / `musicTitle` in `src/data/config.js`
 
 Browsers often block autoplay — the player starts after a tap.
 

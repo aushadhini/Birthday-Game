@@ -80,7 +80,7 @@ export default function MemoryQuiz({ onComplete }) {
                 </div>
               </div>
               <button type="button" onClick={continueAfterUnlock} className="btn-primary mt-8 self-center">
-                {index + 1 >= quizQuestions.length ? '🎁 Open the Surprise' : '⭐ Next Memory'}
+                {index + 1 >= quizQuestions.length ? 'Open the Surprise' : 'Next Memory'}
               </button>
             </motion.div>
           ) : (

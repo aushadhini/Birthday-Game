@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { siteConfig } from '../data/config';
+import { birthdayLabel } from '../data/birthdayMath';
 
 /**
- * Live countdown to Adeesha's birthday (August 14).
- * If the date has passed this year, it targets next year's birthday.
+ * Three states, because this is opened on the day and then kept:
+ *   · on the birthday  → a banner, no timer (this is what he'll actually see)
+ *   · before it        → the countdown grid
+ *   · after it         → the same grid, honestly labelled "until your next one"
  */
 export default function Countdown() {
   const [remaining, setRemaining] = useState(getRemaining());
@@ -17,14 +20,21 @@ export default function Countdown() {
   if (remaining.isToday) {
     return (
       <motion.div
-        initial={{ opacity: 0, y: 8 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className="text-center"
       >
-        <p className="font-display text-2xl text-rose-ink md:text-3xl">
-          It&apos;s your birthday today
+        <p className="text-[11px] uppercase tracking-[0.32em] text-rose-accent">
+          {birthdayLabel()} · it is today
         </p>
-        <p className="mt-1 text-sm text-rose-muted">Let the celebration begin</p>
+        <p className="mt-2 font-display text-2xl md:text-3xl">
+          <span className="text-foil">No more counting</span>
+        </p>
+        <div className="mx-auto mt-3 h-px w-20 bg-gradient-to-r from-transparent via-rose-accent to-transparent" />
+        <p className="mt-3 text-sm text-rose-muted">
+          Every one of these days was leading here.
+        </p>
       </motion.div>
     );
   }
@@ -39,7 +49,7 @@ export default function Countdown() {
   return (
     <div className="w-full max-w-md">
       <p className="mb-3 text-center text-xs uppercase tracking-[0.25em] text-rose-muted">
-        Countdown to August 14
+        {remaining.isNextYear ? 'Until your next one' : `Countdown to ${birthdayLabel()}`}
       </p>
       <div className="grid grid-cols-4 gap-2 sm:gap-3">
         {units.map((unit) => (
@@ -49,7 +59,7 @@ export default function Countdown() {
                 key={unit.value}
                 initial={{ opacity: 0.4, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="font-display text-2xl text-rose-accent sm:text-3xl"
+                className="tabular font-display text-2xl text-rose-accent sm:text-3xl"
               >
                 {String(unit.value).padStart(2, '0')}
               </motion.span>
@@ -76,7 +86,9 @@ function getRemaining() {
   );
 
   // After birthday night, roll to next year
+  let isNextYear = false;
   if (now > new Date(target.getTime() + 24 * 60 * 60 * 1000 - 1)) {
+    isNextYear = true;
     target = new Date(
       now.getFullYear() + 1,
       siteConfig.birthdayMonth,
@@ -93,7 +105,7 @@ function getRemaining() {
     now.getDate() === siteConfig.birthdayDay;
 
   if (isToday || diff <= 0) {
-    return { isToday: true, days: 0, hours: 0, minutes: 0, seconds: 0 };
+    return { isToday: true, isNextYear: false, days: 0, hours: 0, minutes: 0, seconds: 0 };
   }
 
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
@@ -101,5 +113,5 @@ function getRemaining() {
   const minutes = Math.floor((diff / (1000 * 60)) % 60);
   const seconds = Math.floor((diff / 1000) % 60);
 
-  return { isToday: false, days, hours, minutes, seconds };
+  return { isToday: false, isNextYear, days, hours, minutes, seconds };
 }

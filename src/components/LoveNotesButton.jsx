@@ -118,9 +118,9 @@ const COLLECTIBLES_CONFIG = [
 
 /* ─── PREMIUM SVG ILLUSTRATIONS ─── */
 export function CollectibleIcon({ id, className = "h-full w-full" }) {
-  const gold = "#D4AF37";
-  const rose = "#E8A0A8";
-  const ivory = "#FFF8E7";
+  const gold = "#C9A86C";
+  const rose = "#F0A8B8";
+  const ivory = "#F3EEE6";
 
   switch (id) {
     case 1: // Wax-sealed love letter
@@ -380,6 +380,9 @@ export default function LoveNotesButton({
     // Play sparkle sound instantly
     if (soundEnabled) playSparkleSound();
 
+    // A tiny double-tap of haptics on phones — the object feels physical
+    if (navigator.vibrate) navigator.vibrate([14, 40, 22]);
+
     // After animation zooms to center, transform it into envelope
     setTimeout(() => {
       if (soundEnabled) playPaperSound();
@@ -417,19 +420,24 @@ export default function LoveNotesButton({
           const rotSeed = (item.id * 13) % 20 - 10; // -10 to 10 deg
           const durSeed = 6 + (item.id % 5) * 1.5; // 6s to 12s
           const delaySeed = (item.id % 3) * 0.4;
+          // Deterministic jitter so the layout scatters instead of reading as rows
+          const jitterY = ((item.id * 37) % 17) - 8; // -8 to 8 px
+          const jitterX = ((item.id * 53) % 15) - 7; // -7 to 7 px
 
           return (
             <motion.button
               key={item.id}
               onClick={(e) => handleCollect(item, e)}
-              className="absolute pointer-events-auto z-30 flex h-11 w-11 items-center justify-center rounded-full border p-2 cursor-pointer focus:outline-none sm:h-14 sm:w-14"
+              title={item.name}
+              aria-label={`Collect the ${item.name.toLowerCase()}`}
+              className="absolute pointer-events-auto z-30 flex h-11 w-11 items-center justify-center rounded-full border p-2 cursor-pointer sm:h-14 sm:w-14"
               style={{
-                top: item.top,
-                left: item.left,
-                right: item.right,
-                borderColor: 'rgba(212, 175, 55, 0.45)',
-                background: 'radial-gradient(circle, rgba(11,29,58,0.85) 0%, rgba(5,15,30,0.95) 100%)',
-                boxShadow: '0 0 16px rgba(212,175,55,0.25), inset 0 0 12px rgba(212,175,55,0.1)',
+                top: `calc(${item.top} + ${jitterY}px)`,
+                left: item.left ? `calc(${item.left} + ${jitterX}px)` : undefined,
+                right: item.right ? `calc(${item.right} + ${jitterX}px)` : undefined,
+                borderColor: 'rgba(201, 168, 108, 0.45)',
+                background: 'radial-gradient(circle, rgba(11,18,32,0.85) 0%, rgba(9,14,26,0.95) 100%)',
+                boxShadow: '0 0 16px rgba(201,168,108,0.25), inset 0 0 12px rgba(201,168,108,0.1)',
                 filter: 'drop-shadow(0 4px 10px rgba(0,0,0,0.4))',
               }}
               initial={{ scale: 0, opacity: 0 }}
@@ -442,8 +450,8 @@ export default function LoveNotesButton({
               exit={{ scale: 0, opacity: 0 }}
               whileHover={{
                 scale: 1.15,
-                borderColor: 'rgba(212, 175, 55, 0.95)',
-                boxShadow: '0 0 24px rgba(212,175,55,0.65), 0 0 40px rgba(232,160,168,0.3)',
+                borderColor: 'rgba(201, 168, 108, 0.95)',
+                boxShadow: '0 0 24px rgba(201,168,108,0.65), 0 0 40px rgba(240,168,184,0.3)',
               }}
               transition={{
                 y: {
@@ -463,13 +471,13 @@ export default function LoveNotesButton({
               }}
             >
               {/* Soft glow trail inside */}
-              <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#D4AF37]/5 to-[#E8A0A8]/10 animate-pulse pointer-events-none" />
+              <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#C9A86C]/5 to-[#F0A8B8]/10 animate-pulse pointer-events-none" />
               
               <CollectibleIcon id={item.id} />
 
               {/* Sparkle particle trail */}
-              <span className="absolute -top-1 -right-1 text-[8px] text-[#FFF8E7] animate-ping opacity-60">✦</span>
-              <span className="absolute -bottom-1 -left-1 text-[8px] text-[#E8A0A8] animate-pulse">♥</span>
+              <span className="absolute -top-1 -right-1 text-[8px] text-[#F3EEE6] animate-ping opacity-60">✦</span>
+              <span className="absolute -bottom-1 -left-1 text-[8px] text-[#F0A8B8] animate-pulse">♥</span>
             </motion.button>
           );
         })}
@@ -478,7 +486,7 @@ export default function LoveNotesButton({
       {/* ─── COLLECTION ANIMATION PORTAL LAYER ─── */}
       <AnimatePresence>
         {collectingId !== null && (
-          <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center bg-[#0B1D3A]/40 backdrop-blur-[2px]">
+          <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center bg-[#0B1220]/40 backdrop-blur-[2px]">
             <motion.div
               initial={{
                 position: 'fixed',
@@ -494,28 +502,28 @@ export default function LoveNotesButton({
                 scale: [1, 2.5, 1.8],
                 rotate: [0, 360, 720],
                 boxShadow: [
-                  '0 0 20px rgba(212,175,55,0.4)',
-                  '0 0 60px rgba(212,175,55,0.9), 0 0 100px rgba(232,160,168,0.7)',
-                  '0 0 40px rgba(212,175,55,0.6)',
+                  '0 0 20px rgba(201,168,108,0.4)',
+                  '0 0 60px rgba(201,168,108,0.9), 0 0 100px rgba(240,168,184,0.7)',
+                  '0 0 40px rgba(201,168,108,0.6)',
                 ]
               }}
               transition={{
                 duration: 1.2,
                 ease: [0.16, 1, 0.3, 1]
               }}
-              className="flex h-16 w-16 items-center justify-center rounded-full border border-[#D4AF37] bg-[#0B1D3A]"
+              className="flex h-16 w-16 items-center justify-center rounded-full border border-[#C9A86C] bg-[#0B1220]"
             >
               <CollectibleIcon id={collectingId} className="h-10 w-10" />
               
               {/* Sparkle burst circles */}
               <motion.div 
-                className="absolute inset-0 rounded-full border-2 border-[#FFF8E7]"
+                className="absolute inset-0 rounded-full border-2 border-[#F3EEE6]"
                 initial={{ scale: 0.8, opacity: 0.9 }}
                 animate={{ scale: 2.2, opacity: 0 }}
                 transition={{ duration: 0.8, delay: 0.3 }}
               />
               <motion.div 
-                className="absolute inset-0 rounded-full border border-[#E8A0A8]"
+                className="absolute inset-0 rounded-full border border-[#F0A8B8]"
                 initial={{ scale: 0.8, opacity: 0.8 }}
                 animate={{ scale: 2.8, opacity: 0 }}
                 transition={{ duration: 1, delay: 0.4 }}
@@ -535,9 +543,9 @@ export default function LoveNotesButton({
           }}
           aria-label="Open Love Storybook"
           title="Open Love Storybook"
-          className="pointer-events-auto group relative flex h-14 w-14 items-center justify-center rounded-full border border-[#D4AF37] text-lg shadow-[0_0_20px_rgba(212,175,55,0.35)] backdrop-blur-md sm:h-16 sm:w-16 sm:text-xl"
+          className="pointer-events-auto group relative flex h-14 w-14 items-center justify-center rounded-full border border-[#C9A86C] text-lg shadow-[0_0_20px_rgba(201,168,108,0.35)] backdrop-blur-md sm:h-16 sm:w-16 sm:text-xl"
           style={{
-            background: 'linear-gradient(135deg, rgba(11,29,58,0.92) 0%, rgba(5,15,30,0.95) 100%)',
+            background: 'linear-gradient(135deg, rgba(11,18,32,0.92) 0%, rgba(9,14,26,0.95) 100%)',
           }}
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -545,23 +553,23 @@ export default function LoveNotesButton({
           whileTap={{ scale: 0.95 }}
         >
           {/* Circular book SVG */}
-          <svg viewBox="0 0 24 24" fill="none" stroke="#D4AF37" strokeWidth="1.5" className="h-6 w-6 relative z-10 transition-transform group-hover:scale-110">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#C9A86C" strokeWidth="1.5" className="h-6 w-6 relative z-10 transition-transform group-hover:scale-110">
             <path d="M4 19.5A2.5 2.5 0 016.5 17H20M4 19.5A2.5 2.5 0 006.5 22H20M4 19.5V3.5A2.5 2.5 0 016.5 1H20v16H6.5a2.5 2.5 0 00-2.5 2.5z" />
             <path d="M10 5h6M10 9h6" strokeWidth="1" strokeLinecap="round" />
           </svg>
 
           {/* Badge count of found collectibles */}
           <div 
-            className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold text-[#0B1D3A]"
+            className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold text-[#0B1220]"
             style={{
-              background: 'linear-gradient(135deg, #D4AF37 0%, #FFF8E7 100%)',
-              boxShadow: '0 0 8px rgba(212,175,55,0.6)'
+              background: 'linear-gradient(135deg, #C9A86C 0%, #F3EEE6 100%)',
+              boxShadow: '0 0 8px rgba(201,168,108,0.6)'
             }}
           >
             {collectedIds.length}
           </div>
 
-          <span className="pointer-events-none absolute right-full mr-3 hidden whitespace-nowrap rounded-full border border-[#D4AF37]/40 bg-[#0B1D3A]/90 px-3.5 py-1.5 text-[11px] tracking-wide text-[#FFF8E7] opacity-0 transition-opacity duration-300 group-hover:opacity-100 sm:block">
+          <span className="pointer-events-none absolute right-full mr-3 hidden whitespace-nowrap rounded-full border border-[#C9A86C]/40 bg-[#0B1220]/90 px-3.5 py-1.5 text-[11px] tracking-wide text-[#F3EEE6] opacity-0 transition-opacity duration-300 group-hover:opacity-100 sm:block">
             Open Storybook
           </span>
         </motion.button>
@@ -574,7 +582,7 @@ export default function LoveNotesButton({
             {/* Dark glass backdrop */}
             <motion.button
               type="button"
-              className="absolute inset-0 bg-[#0B1D3A]/85 backdrop-blur-md"
+              className="absolute inset-0 bg-[#0B1220]/85 backdrop-blur-md"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -585,10 +593,10 @@ export default function LoveNotesButton({
             <motion.div
               role="dialog"
               aria-modal="true"
-              className="relative z-10 w-full max-w-lg overflow-hidden rounded-3xl border border-[#D4AF37]/35 shadow-[0_25px_60px_rgba(0,0,0,0.6)]"
+              className="relative z-10 w-full max-w-lg overflow-hidden rounded-3xl border border-[#C9A86C]/35 shadow-[0_25px_60px_rgba(0,0,0,0.6)]"
               style={{
                 // Ivory parchment styled background
-                backgroundColor: '#FFF8E7',
+                backgroundColor: '#F3EEE6',
                 backgroundImage: 'radial-gradient(circle at 50% 50%, rgba(255,255,255,0.6) 0%, rgba(255,248,231,0.9) 100%)'
               }}
               initial={{ opacity: 0, y: 50, scale: 0.93 }}
@@ -609,7 +617,7 @@ export default function LoveNotesButton({
                 {[...Array(6)].map((_, i) => (
                   <span 
                     key={i} 
-                    className="absolute text-xs text-[#D4AF37] animate-pulse"
+                    className="absolute text-xs text-[#C9A86C] animate-pulse"
                     style={{
                       left: `${15 + i * 16}%`,
                       top: `${20 + (i * 12) % 60}%`,
@@ -622,21 +630,21 @@ export default function LoveNotesButton({
               </div>
 
               {/* Inner content border */}
-              <div className="relative m-4 border border-[#D4AF37]/20 rounded-2xl p-6 sm:p-8 flex flex-col justify-between" style={{ minHeight: '420px' }}>
+              <div className="relative m-4 border border-[#C9A86C]/20 rounded-2xl p-6 sm:p-8 flex flex-col justify-between" style={{ minHeight: '420px' }}>
                 
                 {/* Header */}
-                <div className="flex items-center justify-between border-b border-[#D4AF37]/25 pb-3">
+                <div className="flex items-center justify-between border-b border-[#C9A86C]/25 pb-3">
                   <div>
-                    <h3 className="font-display italic text-[#D4AF37] text-lg sm:text-xl">
+                    <h3 className="font-display italic text-[#C9A86C] text-lg sm:text-xl">
                       A Birthday Letter
                     </h3>
-                    <p className="text-[10px] tracking-widest uppercase text-[#0B1D3A]/60">
+                    <p className="text-[10px] tracking-widest uppercase text-[#0B1220]/60">
                       Page {collectedIds.length === 0 ? "00" : String(activePage + 1).padStart(2, '0')} / 29
                     </p>
                   </div>
                   <button 
                     onClick={() => setModalOpen(false)}
-                    className="text-xs tracking-wider uppercase border border-[#0B1D3A]/25 rounded-full px-3 py-1 text-[#0B1D3A]/70 hover:bg-[#0B1D3A]/5 hover:text-[#0B1D3A] transition"
+                    className="text-xs tracking-wider uppercase border border-[#0B1220]/25 rounded-full px-3 py-1 text-[#0B1220]/70 hover:bg-[#0B1220]/5 hover:text-[#0B1220] transition"
                   >
                     Close
                   </button>
@@ -646,14 +654,14 @@ export default function LoveNotesButton({
                 <div className="flex-1 flex flex-col justify-center py-6">
                   {collectedIds.length === 0 ? (
                     <div className="text-center py-8">
-                      <div className="mx-auto h-16 w-16 text-[#D4AF37] mb-4">
+                      <div className="mx-auto h-16 w-16 text-[#C9A86C] mb-4">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                           <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
                           <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z" />
                         </svg>
                       </div>
-                      <h4 className="font-display italic text-[#0B1D3A] text-xl mb-2">Magical Quest Locked</h4>
-                      <p className="text-xs text-[#0B1D3A]/60 max-w-xs mx-auto leading-relaxed">
+                      <h4 className="font-display italic text-[#0B1220] text-xl mb-2">Magical Quest Locked</h4>
+                      <p className="text-xs text-[#0B1220]/60 max-w-xs mx-auto leading-relaxed">
                         Search the screen to find and collect floating magical objects. Each object reveals a new page of my handwritten birthday letter!
                       </p>
                     </div>
@@ -665,14 +673,14 @@ export default function LoveNotesButton({
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -20 }}
                         transition={{ duration: 0.3 }}
-                        className="text-[#0B1D3A]"
+                        className="text-[#0B1220]"
                       >
-                        <h4 className="font-display italic text-[#D4AF37] text-2xl text-center mb-4">
+                        <h4 className="font-display italic text-[#C9A86C] text-2xl text-center mb-4">
                           {loveReasons[activePage]?.title || "Chapter Unlocked"}
                         </h4>
                         
                         {/* Elegant cursive quote styling */}
-                        <p className="font-display text-lg sm:text-xl text-[#0B1D3A]/90 leading-relaxed text-center italic max-w-md mx-auto px-2">
+                        <p className="font-display text-lg sm:text-xl text-[#0B1220]/90 leading-relaxed text-center italic max-w-md mx-auto px-2">
                           &ldquo;{loveReasons[activePage]?.message}&rdquo;
                         </p>
                       </motion.div>
@@ -682,7 +690,7 @@ export default function LoveNotesButton({
 
                 {/* Footer Controls */}
                 {collectedIds.length > 0 && (
-                  <div className="border-t border-[#D4AF37]/25 pt-4 flex flex-col gap-3">
+                  <div className="border-t border-[#C9A86C]/25 pt-4 flex flex-col gap-3">
                     <div className="flex items-center justify-between">
                       <button
                         onClick={() => {
@@ -692,7 +700,7 @@ export default function LoveNotesButton({
                           }
                         }}
                         disabled={activePage === 0}
-                        className="text-xs tracking-wider uppercase border border-[#0B1D3A]/15 rounded-full px-4 py-2 text-[#0B1D3A]/70 hover:bg-[#0B1D3A]/5 disabled:opacity-30 disabled:pointer-events-none transition"
+                        className="text-xs tracking-wider uppercase border border-[#0B1220]/15 rounded-full px-4 py-2 text-[#0B1220]/70 hover:bg-[#0B1220]/5 disabled:opacity-30 disabled:pointer-events-none transition"
                       >
                         ← Previous
                       </button>
@@ -700,7 +708,7 @@ export default function LoveNotesButton({
                       {/* Sound Control Indicator */}
                       <button 
                         onClick={() => setSoundEnabled(!soundEnabled)} 
-                        className="text-[#0B1D3A]/40 hover:text-[#0B1D3A]/70 transition p-1"
+                        className="text-[#0B1220]/40 hover:text-[#0B1220]/70 transition p-1"
                         title={soundEnabled ? "Mute Sounds" : "Unmute Sounds"}
                       >
                         {soundEnabled ? (
@@ -722,9 +730,9 @@ export default function LoveNotesButton({
                           }
                         }}
                         disabled={activePage === collectedIds.length - 1}
-                        className="text-xs tracking-wider uppercase bg-[#0B1D3A] text-[#FFF8E7] rounded-full px-5 py-2 hover:bg-[#0B1D3A]/90 disabled:opacity-30 disabled:pointer-events-none transition"
+                        className="text-xs tracking-wider uppercase bg-[#0B1220] text-[#F3EEE6] rounded-full px-5 py-2 hover:bg-[#0B1220]/90 disabled:opacity-30 disabled:pointer-events-none transition"
                         style={{
-                          boxShadow: '0 4px 12px rgba(11,29,58,0.2)'
+                          boxShadow: '0 4px 12px rgba(11,18,32,0.2)'
                         }}
                       >
                         Next →
@@ -732,7 +740,7 @@ export default function LoveNotesButton({
                     </div>
 
                     {/* Progress feedback */}
-                    <div className="flex items-center justify-between text-[10px] text-[#0B1D3A]/50">
+                    <div className="flex items-center justify-between text-[10px] text-[#0B1220]/50">
                       <span>Unlocked: {collectedIds.length} of 29 objects</span>
                       <button 
                         onClick={resetProgress}

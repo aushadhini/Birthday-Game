@@ -12,12 +12,14 @@ export default function PasswordGate({ onUnlock }) {
   const [error, setError] = useState(false);
   const [shaking, setShaking] = useState(false);
 
+  const normalize = (input) => String(input).trim().toLowerCase().replace(/[\s\-/.]+/g, '');
+
   const submit = (e) => {
     e.preventDefault();
-    const normalized = value.trim().toLowerCase().replace(/\s+/g, '');
-    const expected = siteConfig.password.trim().toLowerCase().replace(/\s+/g, '');
+    const normalized = normalize(value);
+    const accepted = [siteConfig.password, ...(siteConfig.passwordAliases ?? [])].map(normalize);
 
-    if (normalized === expected) {
+    if (accepted.includes(normalized)) {
       setError(false);
       onUnlock?.();
       return;
@@ -47,10 +49,13 @@ export default function PasswordGate({ onUnlock }) {
         >
           Private invitation
         </motion.p>
-        <h1 className="mt-3 font-display text-3xl text-rose-ink sm:text-4xl">
-          Birthday Quest for Adeesha
+        <h1 className="mt-3 font-display text-3xl sm:text-4xl">
+          <span className="text-foil">{siteConfig.projectName}</span>
         </h1>
-        <p className="mt-3 text-sm text-rose-muted">{siteConfig.passwordHint}</p>
+        <p className="mt-2 font-display text-base italic text-rose-muted/80">
+          {siteConfig.projectTagline}
+        </p>
+        <p className="mt-5 text-sm text-rose-muted">{siteConfig.passwordHint}</p>
 
         <label className="mt-8 block">
           <span className="sr-only">Password</span>
@@ -68,7 +73,7 @@ export default function PasswordGate({ onUnlock }) {
         </label>
 
         {error && (
-          <p className="mt-3 text-sm text-soft-rose">Hmm, not quite. Try again.</p>
+          <p className="mt-3 text-sm text-soft-rose">Not quite. Try the date you were born.</p>
         )}
 
         <button type="submit" className="btn-primary mt-6 w-full sm:w-auto">

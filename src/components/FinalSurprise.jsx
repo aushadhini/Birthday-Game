@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import FloatingDecorations from './FloatingDecorations';
 import MusicPlayer from './MusicPlayer';
+import CandleBlowOut from './CandleBlowOut';
 
 /**
  * Level 3 — Birthday Surprise finale with cake, fireworks, confetti & message.
@@ -85,23 +86,24 @@ export default function FinalSurprise({ onReplay }) {
       </div>
 
       <div className="relative z-10 mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center px-6 py-16 text-center">
+        {/* The cake — the candles can be blown out with real breath */}
         <motion.div
-          animate={{ y: [0, -6, 0], scale: [1, 1.02, 1] }}
-          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-          className="mb-8 font-display text-6xl text-rose-accent drop-shadow-lg sm:text-7xl"
-          aria-hidden
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          className="mb-10 w-full max-w-md"
         >
-          ✦
+          <CandleBlowOut onAllOut={() => setBurstKey((k) => k + 1)} />
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9 }}
-          className="rounded-3xl border border-rose-line bg-white/5 px-6 py-8 text-left shadow-lift backdrop-blur-md sm:px-10 sm:py-10"
+          transition={{ duration: 0.9, delay: 0.15 }}
+          className="panel-glass edge-gold rounded-3xl px-6 py-8 text-left sm:px-10 sm:py-10"
         >
-          <h2 className="font-display text-center text-3xl leading-tight text-rose-ink sm:text-4xl">
-            🎁 Happy Birthday, My Love
+          <h2 className="font-display text-center text-3xl leading-tight sm:text-4xl">
+            <span className="text-foil">Happy Birthday, My Love</span>
           </h2>
 
           <div className="mt-6 space-y-4 text-sm leading-relaxed text-rose-muted sm:text-base">
@@ -128,9 +130,9 @@ export default function FinalSurprise({ onReplay }) {
           <button
             type="button"
             onClick={onReplay}
-            className="rounded-full border border-rose-accent/30 px-6 py-2.5 text-sm text-rose-muted transition hover:border-rose-accent hover:text-rose-ink"
+            className="rounded-full border border-rose-accent/30 px-6 py-2.5 text-sm tracking-[0.06em] text-rose-muted transition hover:border-rose-accent hover:text-rose-ink"
           >
-            🎮 Play Again
+            Play it again
           </button>
         </div>
       </div>

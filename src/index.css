@@ -15,9 +15,17 @@
   --color-midnight: #0b1220;
   --color-midnight-mid: #121c2e;
 
+  /* Unified gold ramp — see src/data/theme.js for the JS/SVG equivalents */
+  --color-gold: #c9a86c;
+  --color-gold-light: #e0c48a;
+  --color-gold-glow: #f0d9a0;
+  --color-gold-deep: #a8894e;
+
   --shadow-soft: 0 12px 36px rgba(0, 0, 0, 0.28);
   --shadow-lift: 0 24px 60px rgba(0, 0, 0, 0.45);
   --shadow-gold: 0 0 20px rgba(201, 168, 108, 0.45), 0 0 48px rgba(201, 168, 108, 0.28), 0 8px 24px rgba(0, 0, 0, 0.35);
+
+  --ease-silk: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @layer base {
@@ -47,6 +55,40 @@
     background: color-mix(in oklab, var(--color-rose-accent) 35%, transparent);
     color: #fff;
   }
+
+  /* Luxury detail: one consistent, visible focus ring instead of none */
+  :focus-visible {
+    outline: 2px solid color-mix(in oklab, var(--color-gold) 80%, transparent);
+    outline-offset: 3px;
+    border-radius: 999px;
+  }
+
+  /* Serif digits jump width every tick without this */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum';
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  /* Respect the OS setting — premium means calm, not relentless */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.05ms !important;
+    }
+  }
 }
 
 @layer components {
@@ -72,35 +114,43 @@
       linear-gradient(180deg, #0f1a2e 0%, #0b1220 55%, #152238 100%);
   }
 
+  /* Gold foil CTA. No idle animation — the shimmer sweeps only on hover,
+     which reads as expensive rather than as a casino button. */
   .btn-primary {
-    @apply inline-flex items-center justify-center rounded-full px-8 py-3.5 text-sm font-medium tracking-[0.08em] transition;
+    @apply relative inline-flex items-center justify-center overflow-hidden rounded-full px-8 py-3.5 text-sm font-medium tracking-[0.08em];
     background: linear-gradient(135deg, #f0d9a0 0%, #e0c48a 30%, #c9a86c 60%, #a8894e 100%);
     color: #1a1420;
     box-shadow: var(--shadow-gold);
-    animation: gold-pulse 3s ease-in-out infinite;
+    transition:
+      box-shadow 0.4s var(--ease-silk),
+      transform 0.4s var(--ease-silk),
+      filter 0.4s var(--ease-silk);
+  }
+
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.55) 50%, transparent 65%);
+    transform: translateX(-120%);
+    transition: transform 0.9s var(--ease-silk);
+  }
+
+  .btn-primary:hover::after {
+    transform: translateX(120%);
   }
 
   .btn-primary:hover {
-    filter: brightness(1.1);
-    transform: translateY(-1px);
+    filter: brightness(1.06);
+    transform: translateY(-2px);
     box-shadow:
       0 0 28px rgba(224, 196, 138, 0.65),
       0 0 60px rgba(201, 168, 108, 0.4),
-      0 10px 28px rgba(0, 0, 0, 0.4);
+      0 12px 30px rgba(0, 0, 0, 0.45);
   }
 
   .btn-primary:active {
     transform: translateY(0);
-  }
-
-  @keyframes gold-pulse {
-    0%,
-    100% {
-      box-shadow: 0 0 18px rgba(201, 168, 108, 0.4), 0 0 40px rgba(201, 168, 108, 0.22), 0 8px 24px rgba(0, 0, 0, 0.35);
-    }
-    50% {
-      box-shadow: 0 0 28px rgba(224, 196, 138, 0.55), 0 0 56px rgba(201, 168, 108, 0.35), 0 8px 24px rgba(0, 0, 0, 0.35);
-    }
   }
 
   .btn-ghost {
@@ -119,6 +169,74 @@
     background: rgba(21, 34, 56, 0.72);
     border: 1px solid rgba(201, 168, 108, 0.18);
     backdrop-filter: blur(16px);
+  }
+
+  /* Hairline gold inner edge — the detail that separates "glass card" from
+     "expensive glass card". */
+  .edge-gold {
+    box-shadow:
+      inset 0 1px 0 rgba(240, 217, 160, 0.22),
+      inset 0 0 0 1px rgba(201, 168, 108, 0.1),
+      var(--shadow-lift);
+  }
+
+  /* Foil-stamped heading */
+  .text-foil {
+    background: linear-gradient(100deg, #a8894e 0%, #e0c48a 30%, #fff6dd 45%, #e0c48a 60%, #a8894e 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: foil-drift 9s ease-in-out infinite;
+  }
+
+  @keyframes foil-drift {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  /* Starfield twinkle runs on the compositor, not on rAF — 110 stars on a
+     phone would otherwise cost more than the whole rest of the game. */
+  .star {
+    position: absolute;
+    border-radius: 9999px;
+    background: #fff;
+    animation: twinkle var(--tw-dur, 4s) ease-in-out var(--tw-delay, 0s) infinite;
+    will-change: opacity;
+  }
+
+  .star-warm {
+    background: var(--color-gold-glow);
+  }
+
+  .star-near {
+    box-shadow: 0 0 4px rgba(255, 255, 255, 0.55);
+  }
+
+  @keyframes twinkle {
+    0%,
+    100% {
+      opacity: var(--tw-min, 0.25);
+    }
+    50% {
+      opacity: var(--tw-max, 0.75);
+    }
+  }
+
+  /* Film grain + vignette: kills the flat-gradient look on big screens */
+  .layer-grain {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.035;
+    mix-blend-mode: overlay;
+  }
+
+  .layer-vignette {
+    background: radial-gradient(ellipse 120% 90% at 50% 45%, transparent 40%, rgba(4, 8, 16, 0.55) 100%);
   }
 
   .shadow-soft {
