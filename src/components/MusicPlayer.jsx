@@ -1,55 +1,19 @@
-import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { siteConfig } from '../data/config';
+import { useMusic } from '../context/musicContext';
 
 /**
- * Lightweight romantic music player.
- * Drop an mp3 into /public/music/ and set musicSrc in src/data/config.js
+ * Full-width control for our song.
+ * The audio itself lives in MusicProvider, so this is just a view over the
+ * shared playback state — pausing here also pauses the mini control, and the
+ * track keeps playing when you change screens.
+ * Drop the mp3 into /public/music/ and set musicSrc in src/data/config.js
  */
 export default function MusicPlayer({ compact = false }) {
-  const audioRef = useRef(null);
-  const [playing, setPlaying] = useState(false);
-  const [error, setError] = useState(false);
-
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    const onEnded = () => setPlaying(false);
-    const onError = () => {
-      setError(true);
-      setPlaying(false);
-    };
-
-    audio.addEventListener('ended', onEnded);
-    audio.addEventListener('error', onError);
-    return () => {
-      audio.removeEventListener('ended', onEnded);
-      audio.removeEventListener('error', onError);
-    };
-  }, []);
-
-  const toggle = async () => {
-    const audio = audioRef.current;
-    if (!audio || error) return;
-
-    try {
-      if (playing) {
-        audio.pause();
-        setPlaying(false);
-      } else {
-        await audio.play();
-        setPlaying(true);
-      }
-    } catch {
-      // Autoplay policies may block until another gesture — show gentle tip
-      setError(true);
-    }
-  };
+  const { playing, error, toggle } = useMusic();
 
   return (
     <div className={compact ? '' : 'w-full max-w-xs'}>
-      <audio ref={audioRef} src={siteConfig.musicSrc} loop preload="none" />
       <button
         type="button"
         onClick={toggle}
@@ -70,12 +34,12 @@ export default function MusicPlayer({ compact = false }) {
           <span className="block truncate text-sm font-medium text-rose-ink">
             🎵 {siteConfig.musicTitle}
           </span>
-          <span className="block text-xs text-rose-muted">
+          <span className="block truncate text-xs text-rose-muted">
             {error
-              ? 'Add /public/music/romantic-song.mp3'
+              ? `Add public${siteConfig.musicSrc}`
               : playing
-                ? 'Playing softly…'
-                : 'Tap to play'}
+                ? `${siteConfig.musicLabel} · playing softly…`
+                : `${siteConfig.musicLabel} · ${siteConfig.musicArtist} · tap to play`}
           </span>
         </span>
         <AnimatePresence>

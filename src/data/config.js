@@ -16,8 +16,9 @@ export const siteConfig = {
   birthdayMonth: 7, // August
   birthdayDay: 14,
 
-  // Optional romantic song — place the file in /public/music/
-  // Leave empty to hide the player until you add a track.
-  musicSrc: '/music/romantic-song.mp3',
-  musicTitle: 'Our Song',
+  // Our song — place the mp3 at /public/music/until-i-found-you.mp3
+  musicSrc: '/music/until-i-found-you.mp3',
+  musicTitle: 'Until I Found You',
+  musicArtist: 'Stephen Sanchez',
+  musicLabel: 'Our Song',
 };

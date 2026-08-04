@@ -7,6 +7,7 @@ import MemoryQuiz from './components/MemoryQuiz';
 import FinalSurprise from './components/FinalSurprise';
 import PhotoGallery from './components/PhotoGallery';
 import LoveNotesButton from './components/LoveNotesButton';
+import MusicToggleButton from './components/MusicToggleButton';
 import useCollectibles from './hooks/useCollectibles';
 
 /**
@@ -71,6 +72,10 @@ export default function App() {
           )}
         </motion.div>
       </AnimatePresence>
+
+      {/* Play/pause our song from any screen — the audio itself lives in
+          MusicProvider, so it never stops when the screen changes. */}
+      <MusicToggleButton />
 
       {/* Fixed floating surprise — available on every screen after unlock.
           The 29 collectibles themselves only float on Level 1. */}
