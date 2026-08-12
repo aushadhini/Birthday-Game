@@ -17,47 +17,58 @@
  * Any photo you haven't added yet quietly falls back to the gradient card.
  * Tip: portrait crops (4:5) look best — e.g. 1080 x 1350.
  */
+
+/**
+ * Build the URL for a file in public/photos/.
+ *
+ * BASE_URL matters: on GitHub Pages the site lives under /Birthday-Game/, so a
+ * bare '/photos/x.jpg' points at the domain root, 404s, and every card silently
+ * falls back to its gradient. It only *looks* fine on localhost, where the base
+ * happens to be '/'.
+ */
+const photo = (file) => `${import.meta.env.BASE_URL}photos/${file}`;
+
 export const memories = [
   {
     id: 1,
     title: 'Our first smile',
     caption: "The little moment that started a story neither of us knew we'd be writing.",
-    src: '/photos/first-smile.jpg',
+    src: photo('first-smile.jpg'),
     accent: '#3A2A35',
   },
   {
     id: 2,
     title: 'Across the distance',
     caption: 'Miles between us, but somehow you always felt close to my heart.',
-    src: '/photos/across-the-distance.jpg',
+    src: photo('across-the-distance.jpg'),
     accent: '#2A3340',
   },
   {
     id: 3,
     title: 'Adventures together',
     caption: 'Every place was more special simply because I was there with you.',
-    src: '/photos/adventures.jpg',
+    src: photo('adventures.jpg'),
     accent: '#243248',
   },
   {
     id: 4,
     title: 'Your laugh',
     caption: 'The sound I could never get tired of hearing.',
-    src: '/photos/your-laugh.jpg',
+    src: photo('your-laugh.jpg'),
     accent: '#342830',
   },
   {
     id: 5,
     title: 'How far we came',
     caption: 'From two people with a little beginning to a love that became our whole world.',
-    src: '/photos/how-far-we-came.jpg',
+    src: photo('how-far-we-came.jpg'),
     accent: '#2E2A28',
   },
   {
     id: 6,
     title: 'Still choosing you',
     caption: "After every moment, every mile, and every year — I'd still choose you. 🤍",
-    src: '/photos/still-choosing-you.jpg',
+    src: photo('still-choosing-you.jpg'),
     accent: '#3A2832',
   },
 ];

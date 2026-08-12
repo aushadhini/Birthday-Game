@@ -172,6 +172,14 @@ export default function MemoryQuiz({ onComplete }) {
 }
 
 /**
+ * A written-by-hand '/photos/x.jpg' would point at the domain root and 404 on
+ * GitHub Pages, where the site sits under /Birthday-Game/. Re-root it on the
+ * deployed base so either form works.
+ */
+const withBase = (path) =>
+  path.startsWith('/') ? `${import.meta.env.BASE_URL}${path.slice(1)}` : path;
+
+/**
  * Line-art emblems, drawn on with a stroke animation.
  * Pick one per question via `memory.emblem`; falls back to the heart.
  */
@@ -213,7 +221,7 @@ function MemoryVisual({ memory, seed = 0 }) {
   if (memory.photo) {
     return (
       <img
-        src={memory.photo}
+        src={withBase(memory.photo)}
         alt={memory.title}
         className="h-48 w-full object-cover sm:h-56"
       />
