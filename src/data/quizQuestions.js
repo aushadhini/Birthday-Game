@@ -8,9 +8,9 @@
  * 2. `correctIndex: n`  — only option n is accepted (0-based); anything else
  *    shows "Not quite — try again". Use this when there IS a right answer.
  *
- * Optional `memory` unlocks after an accepted answer. No photo needed — set
- * `emblem` and the card draws an animated line-art scene instead. Choices:
- * heart · camera · plane · bubble · infinity · cake · rings.
+ * Optional `memory` unlocks after an accepted answer, as a popup over the
+ * question. No photo needed — the card shows the two of us (see avatarHer /
+ * avatarHim in src/data/config.js) over a soft animated backdrop.
  * Add `photo: '/photos/name.jpg'` only if you'd rather show a real picture.
  */
 export const quizQuestions = [
@@ -25,7 +25,6 @@ export const quizQuestions = [
     ],
     correctIndex: 3,
     memory: {
-      emblem: 'camera',
       title: 'Our first frame',
       text: 'In the car, on the way to somewhere. Not planned, not posed — and I still have it saved.',
       photo: null,
@@ -42,7 +41,6 @@ export const quizQuestions = [
     ],
     correctIndex: 3,
     memory: {
-      emblem: 'plane',
       title: 'Just the two of us',
       text: 'No planning, no packing list — we just decided and went. The whole world shrank down to you, me, and a bag of snacks.',
       photo: null,
@@ -55,7 +53,6 @@ export const quizQuestions = [
     // Trick question — every one of them is right.
     anyAnswer: true,
     memory: {
-      emblem: 'bubble',
       title: 'All of them',
       text: 'Babe, Sudu, my love, Manika — you answer to all of them, and every one of them means the same thing.',
       photo: null,
@@ -64,10 +61,9 @@ export const quizQuestions = [
   {
     id: 4,
     question: 'What is one word that describes us?',
-    options: ['Home', 'Forever', 'Ours', 'Inevitable'],
+    options: ['Home', 'Forever', 'Ours', 'Soulmates'],
     anyAnswer: true,
     memory: {
-      emblem: 'infinity',
       title: 'One word',
       text: 'Whichever one you picked — I would have picked it too.',
       photo: null,
@@ -84,7 +80,6 @@ export const quizQuestions = [
     ],
     anyAnswer: true,
     memory: {
-      emblem: 'cake',
       title: 'Next year',
       text: 'Hold that thought. Next birthday, it is my job to make it happen.',
       photo: null,
@@ -101,7 +96,6 @@ export const quizQuestions = [
     ],
     correctIndex: 1,
     memory: {
-      emblem: 'rings',
       title: 'Correct answer, always',
       text: 'Me. Obviously. 😌❤️ And I would choose you again too — every single time, without thinking about it.',
       photo: null,

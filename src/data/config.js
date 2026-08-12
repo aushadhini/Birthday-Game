@@ -38,6 +38,13 @@ export const siteConfig = {
   // The day you two started — YYYY-MM-DD, read as a local date. '' hides it.
   relationshipStart: '2020-05-20',
 
+  // The two of us, shown on every unlocked memory in Level 2.
+  // Drop square images (bitmoji, avatar, or a cropped photo) into
+  // /public/avatars/ and point these at them, e.g. '/avatars/her.png'.
+  // Leave them null — or delete the files — and hand-drawn avatars stand in.
+  avatarHer: null,
+  avatarHim: null,
+
   // Level 3 — candles on the cake (these can be blown out for real).
   // null = one per year of age, from birthYear above. Set a number to override.
   candleCount: null,

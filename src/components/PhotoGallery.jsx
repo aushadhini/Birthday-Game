@@ -32,8 +32,7 @@ export default function PhotoGallery({ onBack }) {
             📸 Our Memories
           </h2>
           <p className="mt-3 max-w-lg text-sm leading-relaxed text-rose-muted">
-            Moments that still feel warm. Replace the placeholders with your own photos
-            anytime.
+            Moments that still feel warm. 
           </p>
         </motion.div>
 

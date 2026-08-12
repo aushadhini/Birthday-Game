@@ -5,17 +5,16 @@ import MusicPlayer from './MusicPlayer';
 import CandleBlowOut from './CandleBlowOut';
 import { siteConfig } from '../data/config';
 
-const WISH_BANNER_MS = 7000;
-
 /**
  * Level 3 — Birthday Surprise finale with cake, fireworks, confetti & message.
  */
 export default function FinalSurprise({ onReplay }) {
   const [burstKey, setBurstKey] = useState(0);
   // The words the whole game has been walking towards. Held back until the last
-  // flame is out, so blowing the candles has a payoff — the letter below stays
-  // readable the whole time either way, so nothing is ever locked behind it.
+  // flame is out, then the wish banner hands over to the letter on a tap — so
+  // the candles are the only way in and nothing spoils itself early.
   const [wishBanner, setWishBanner] = useState(false);
+  const [letterOpen, setLetterOpen] = useState(false);
 
   useEffect(() => {
     const id = setInterval(() => setBurstKey((k) => k + 1), 2800);
@@ -27,12 +26,12 @@ export default function FinalSurprise({ onReplay }) {
     setBurstKey((k) => k + 1);
   }, []);
 
-  // It bows out on its own — nobody should have to dismiss a birthday wish
-  useEffect(() => {
-    if (!wishBanner) return undefined;
-    const id = setTimeout(() => setWishBanner(false), WISH_BANNER_MS);
-    return () => clearTimeout(id);
-  }, [wishBanner]);
+  // The banner waits for the tap rather than timing out — the tap is what
+  // unwraps the letter, so dismissing it on a clock would skip the payoff
+  const openLetter = useCallback(() => {
+    setWishBanner(false);
+    setLetterOpen(true);
+  }, []);
 
   const confetti = useMemo(
     () =>
@@ -115,34 +114,39 @@ export default function FinalSurprise({ onReplay }) {
           <CandleBlowOut onAllOut={handleAllOut} />
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.15 }}
-          className="panel-glass edge-gold rounded-3xl px-6 py-8 text-left sm:px-10 sm:py-10"
-        >
-          <h2 className="font-display text-center text-3xl leading-tight sm:text-4xl">
-            <span className="text-foil">Happy Birthday, My Love</span>
-          </h2>
+        <AnimatePresence>
+          {letterOpen && (
+            <motion.div
+              key="letter"
+              initial={{ opacity: 0, y: 24, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+              className="panel-glass edge-gold rounded-3xl px-6 py-8 text-left sm:px-10 sm:py-10"
+            >
+              <h2 className="font-display text-center text-3xl leading-tight sm:text-4xl">
+                <span className="text-foil">Happy Birthday, My Love</span>
+              </h2>
 
-          <div className="mt-6 space-y-4 text-sm leading-relaxed text-rose-muted sm:text-base">
-            <p>
-              I hope your birthday is filled with happiness, love, success, and everything you
-              dream of.
-            </p>
-            <p>
-              Thank you for being my best friend, my biggest support, and the person who makes my
-              life happier.
-            </p>
-            <p>I am so lucky to have you.</p>
-            <p className="font-display text-xl text-soft-rose">I love you always</p>
-          </div>
+              <div className="mt-6 space-y-4 text-sm leading-relaxed text-rose-muted sm:text-base">
+                <p>
+                  I hope your birthday is filled with happiness, love, success, and everything you
+                  dream of.
+                </p>
+                <p>
+                  Thank you for being my best friend, my biggest support, and the person who makes
+                  my life happier.
+                </p>
+                <p>I am so lucky to have you.</p>
+                <p className="font-display text-xl text-soft-rose">I love you always</p>
+              </div>
 
-          <p className="mt-8 border-t border-rose-line pt-6 text-center text-xs leading-relaxed text-rose-muted/80 sm:text-sm">
-            P.S. This is your last birthday as my fiancé. Next year, I will celebrate your birthday
-            as your wife.
-          </p>
-        </motion.div>
+              <p className="mt-8 border-t border-rose-line pt-6 text-center text-xs leading-relaxed text-rose-muted/80 sm:text-sm">
+                P.S. This is your last birthday as my fiancé. Next year, I will celebrate your
+                birthday as your wife.
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <div className="mt-8 flex w-full max-w-xs flex-col items-center gap-4">
           <MusicPlayer compact />
@@ -166,14 +170,13 @@ export default function FinalSurprise({ onReplay }) {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.6 }}
           >
-            {/* Dark enough to hush the letter behind it — it carries the same
-                words, and two of them at once reads as a printing error — but
-                still thin enough for the fireworks to flash through */}
+            {/* Tapping anywhere here is what opens the letter — dark enough to
+                own the screen, thin enough for the fireworks to flash through */}
             <button
               type="button"
-              aria-label="Continue"
+              aria-label="Read your letter"
               className="absolute inset-0 bg-[#0B1220]/88 backdrop-blur-[7px]"
-              onClick={() => setWishBanner(false)}
+              onClick={openLetter}
             />
 
             <div className="pointer-events-none relative text-center">

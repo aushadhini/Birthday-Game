@@ -340,7 +340,7 @@ export default function CandleBlowOut({ onAllOut }) {
                   ? 'No microphone, no problem — tap the candles out instead.'
                   : micState === 'unsupported'
                     ? 'This browser will not share a microphone — tap the candles out instead.'
-                    : `${candleCount} candles, one for every year. Make a wish, ${siteConfig.recipientName} — you can really blow these out.`}
+                    : `${candleCount} candles, one for every year. Make a wish, Babe. You can really blow these out.`}
               </p>
               <div className="flex flex-wrap items-center justify-center gap-3">
                 {micState !== 'denied' && micState !== 'unsupported' && (
