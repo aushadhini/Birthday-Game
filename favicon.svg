@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Soft background (same as before) -->
+  <rect width="64" height="64" rx="14" fill="#FFF0F3"/>
+
+  <!-- Flame -->
+  <ellipse cx="32" cy="11" rx="5" ry="7" fill="#E8912A"/>
+  <ellipse cx="32" cy="12" rx="2.5" ry="3.5" fill="#FFD76A"/>
+
+  <!-- Candle -->
+  <rect x="28" y="16" width="8" height="14" rx="2" fill="#3D5F78"/>
+
+  <!-- Top cake layer — dark chocolate -->
+  <rect x="16" y="28" width="32" height="12" rx="4" fill="#5A3A28"/>
+  <!-- Frosting on top -->
+  <path d="M16 32c4 0 4-5 8-5s4 5 8 5 4-5 8-5 4 5 8 5v4H16v-4Z" fill="#7A5238"/>
+
+  <!-- Bottom cake layer — deep rose -->
+  <rect x="10" y="40" width="44" height="16" rx="5" fill="#8B2F45"/>
+  <!-- Frosting drip on bottom -->
+  <path d="M10 44c5 0 5-6 10-6s5 6 11 6 5-6 10-6 5 6 13 6v4H10v-4Z" fill="#A8455C"/>
+
+  <!-- Sprinkles -->
+  <circle cx="20" cy="49" r="2.2" fill="#F5E6C8"/>
+  <circle cx="32" cy="51" r="2.2" fill="#E8C05A"/>
+  <circle cx="44" cy="49" r="2.2" fill="#F5E6C8"/>
+</svg>
