@@ -10,7 +10,9 @@ import LoveNotesButton from './components/LoveNotesButton';
 import MusicToggleButton from './components/MusicToggleButton';
 import AmbientBackdrop from './components/AmbientBackdrop';
 import SecretLetter from './components/SecretLetter';
+import BackButton from './components/BackButton';
 import useCollectibles from './hooks/useCollectibles';
+import useIsPhone from './hooks/useIsPhone';
 
 /**
  * Screen flow:
@@ -27,9 +29,18 @@ const SCREENS = {
   GALLERY: 'gallery',
 };
 
+/* Where the phone's back button goes from each level. The gallery and the finale
+   are left out — both already carry their own way out. */
+const BACK_TO = {
+  [SCREENS.LEVEL1]: { screen: SCREENS.WELCOME, label: 'Back' },
+  [SCREENS.LEVEL2]: { screen: SCREENS.LEVEL1, label: 'Level 1' },
+};
+
 export default function App() {
   const [screen, setScreen] = useState(SCREENS.PASSWORD);
   const unlocked = screen !== SCREENS.PASSWORD;
+  const isPhone = useIsPhone();
+  const back = BACK_TO[screen];
   const { collectedIds, collectedCount, collect, reset } = useCollectibles();
   // Level 1's playing field — QuestScreen measures its card and publishes the
   // node plus one slot per object, so the collectibles land around the card
@@ -94,6 +105,9 @@ export default function App() {
 
       {/* Easter egg: type their name anywhere, or long-press the corner ✦ */}
       <SecretLetter />
+
+      {/* Phones only — the desktop layouts are never this hemmed in */}
+      {isPhone && back && <BackButton label={back.label} onBack={() => setScreen(back.screen)} />}
 
       {/* Fixed floating surprise — available on every screen after unlock.
           The 29 collectibles themselves only float on Level 1. */}

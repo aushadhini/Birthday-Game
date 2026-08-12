@@ -39,6 +39,11 @@ const TOP_LEFT_BADGE = 64; // the secret ✦ pinned top-left
 const BOTTOM_BAR = 104; // music button (left) + storybook button (right)
 const BOTTOM_CORNER = 104;
 
+/* Phone layout only: the fixed ✦ (top-left) and Back (top-right) get a strip of
+   their own along the very top, and the HUD bar starts below it. They used to
+   land on top of the bar, which put the ✦ over the level label. */
+const TOP_STRIP = 56;
+
 /* Depth ramp. A bubble's size is its base size times one of these — small ones
    sit "further back". Widest step first so the cell maths can assume the max. */
 const DEPTH_STEPS = [1, 0.86, 0.72, 0.93, 0.79];
@@ -99,7 +104,7 @@ export function computeQuestLayout({
 
   let fieldHeight = Math.max(
     viewportHeight,
-    anchor === ANCHOR.TOP ? EDGE_PAD + cardHeight : cardHeight + 2 * (CARD_GAP + EDGE_PAD),
+    anchor === ANCHOR.TOP ? TOP_STRIP + cardHeight : cardHeight + 2 * (CARD_GAP + EDGE_PAD),
   );
   let slots = [];
 
@@ -114,7 +119,7 @@ export function computeQuestLayout({
 
   return {
     fieldHeight: Math.round(fieldHeight),
-    cardTop: anchor === ANCHOR.TOP ? EDGE_PAD : Math.round((fieldHeight - cardHeight) / 2),
+    cardTop: anchor === ANCHOR.TOP ? TOP_STRIP : Math.round((fieldHeight - cardHeight) / 2),
     itemSize,
     anchor,
     slots: slots.slice(0, count).map((slot, i) => ({ ...slot, size: bubbleSize(i, itemSize) })),
@@ -123,7 +128,7 @@ export function computeQuestLayout({
 
 function pickSlots({ fieldWidth, fieldHeight, cardWidth, cardHeight, maxSize, count, anchor }) {
   const topAnchored = anchor === ANCHOR.TOP;
-  const cardTop = topAnchored ? EDGE_PAD : (fieldHeight - cardHeight) / 2;
+  const cardTop = topAnchored ? TOP_STRIP : (fieldHeight - cardHeight) / 2;
   const cardBottom = cardTop + cardHeight;
   const cardLeft = topAnchored ? EDGE_PAD : (fieldWidth - cardWidth) / 2;
   const cardRight = topAnchored ? fieldWidth - EDGE_PAD : cardLeft + cardWidth;

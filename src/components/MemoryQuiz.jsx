@@ -78,7 +78,9 @@ export default function MemoryQuiz({ onComplete }) {
       <div className="pointer-events-none absolute inset-0 bg-hero-glow" aria-hidden />
 
       <motion.header
-        className="relative z-10 px-5 py-5 sm:px-8"
+        // pt-16 on phones: the secret ✦ and the back button own the top strip,
+        // so the level label starts below them instead of under the ✦
+        className="relative z-10 px-5 pb-5 pt-16 sm:px-8 sm:pt-5"
         animate={{
           opacity: isOpen ? 0.45 : 1,
           filter: isOpen ? 'blur(5px)' : 'blur(0px)',
