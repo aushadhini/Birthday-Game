@@ -200,6 +200,30 @@
     }
   }
 
+  /* Floating collectible. Its size, position and drift all come from
+     src/data/collectibleLayout.js — each bubble gets its own size off a depth
+     ramp, so nothing here may set width or height. */
+  .collectible {
+    transform-origin: center;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* The pool of shadow a bubble casts on the air below it. Small, soft and
+     offset downwards — without it they read as discs stuck to the backdrop
+     rather than things suspended in front of it. */
+  .collectible::after {
+    content: '';
+    position: absolute;
+    left: 16%;
+    right: 16%;
+    bottom: -22%;
+    height: 26%;
+    border-radius: 9999px;
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0) 72%);
+    filter: blur(2px);
+    pointer-events: none;
+  }
+
   /* Starfield twinkle runs on the compositor, not on rAF — 110 stars on a
      phone would otherwise cost more than the whole rest of the game. */
   .star {

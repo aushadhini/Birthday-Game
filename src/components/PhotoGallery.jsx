@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { memories } from '../data/memories';
 
@@ -6,6 +7,9 @@ import { memories } from '../data/memories';
  * Add photos via src/data/memories.js and /public/photos/
  */
 export default function PhotoGallery({ onBack }) {
+  // Photos not added to /public/photos/ yet fall back to the gradient card.
+  const [missing, setMissing] = useState([]);
+
   return (
     <section className="relative min-h-dvh overflow-hidden">
       <div className="pointer-events-none absolute inset-0 bg-hero-glow" aria-hidden />
@@ -33,37 +37,48 @@ export default function PhotoGallery({ onBack }) {
           </p>
         </motion.div>
 
-        <div className="mt-10 columns-1 gap-5 sm:columns-2 lg:columns-3">
-          {memories.map((memory, i) => (
-            <motion.article
-              key={memory.id}
-              initial={{ opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.06 }}
-              className="mb-5 break-inside-avoid overflow-hidden rounded-2xl border border-rose-line bg-white/5 shadow-soft backdrop-blur-sm"
-            >
-              {memory.src ? (
-                <img
-                  src={memory.src}
-                  alt={memory.title}
-                  className="aspect-[4/5] w-full object-cover"
-                />
-              ) : (
-                <div
-                  className="flex aspect-[4/5] w-full items-end p-5"
-                  style={{
-                    background: `linear-gradient(160deg, ${memory.accent} 0%, #0B1220 100%)`,
-                  }}
-                >
-                  <span className="text-soft-rose/80">♥</span>
+        <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {memories.map((memory, i) => {
+            const showPhoto = memory.src && !missing.includes(memory.id);
+
+            return (
+              <motion.article
+                key={memory.id}
+                initial={{ opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.06 }}
+                className="flex h-full flex-col overflow-hidden rounded-2xl border border-rose-line bg-white/5 shadow-soft backdrop-blur-sm"
+              >
+                {showPhoto ? (
+                  <img
+                    src={memory.src}
+                    alt={memory.title}
+                    onError={() =>
+                      setMissing((prev) =>
+                        prev.includes(memory.id) ? prev : [...prev, memory.id],
+                      )
+                    }
+                    className="aspect-[4/5] w-full object-cover"
+                  />
+                ) : (
+                  <div
+                    className="flex aspect-[4/5] w-full items-end p-5"
+                    style={{
+                      background: `linear-gradient(160deg, ${memory.accent} 0%, #0B1220 100%)`,
+                    }}
+                  >
+                    <span className="text-soft-rose/80">♥</span>
+                  </div>
+                )}
+                <div className="flex flex-1 flex-col px-4 py-4">
+                  <h3 className="font-display text-xl text-rose-ink">{memory.title}</h3>
+                  <p className="mt-1 text-sm leading-relaxed text-rose-muted">
+                    {memory.caption}
+                  </p>
                 </div>
-              )}
-              <div className="px-4 py-4">
-                <h3 className="font-display text-xl text-rose-ink">{memory.title}</h3>
-                <p className="mt-1 text-sm text-rose-muted">{memory.caption}</p>
-              </div>
-            </motion.article>
-          ))}
+              </motion.article>
+            );
+          })}
         </div>
       </div>
     </section>

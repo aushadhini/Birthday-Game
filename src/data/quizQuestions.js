@@ -1,57 +1,109 @@
 /**
  * Level 2 — Memory Challenge questions.
  * Edit freely: add/remove questions, change options, or update answers.
- * `correctIndex` is the 0-based index of the right option.
- * Optional `memory` unlocks after a correct answer (photo + caption).
+ *
+ * TWO KINDS OF QUESTION
+ * 1. `anyAnswer: true`  — every option is accepted and unlocks the memory.
+ *    Use this for reflective questions where there is no wrong answer.
+ * 2. `correctIndex: n`  — only option n is accepted (0-based); anything else
+ *    shows "Not quite — try again". Use this when there IS a right answer.
+ *
+ * Optional `memory` unlocks after an accepted answer. No photo needed — set
+ * `emblem` and the card draws an animated line-art scene instead. Choices:
+ * heart · camera · plane · bubble · infinity · cake · rings.
+ * Add `photo: '/photos/name.jpg'` only if you'd rather show a real picture.
  */
 export const quizQuestions = [
   {
     id: 1,
-    question: 'Where did we first meet?',
-    options: ['University', 'School', 'A coffee shop', 'Online'],
-    correctIndex: 1,
+    question: 'Where was our first photo together taken?',
+    options: [
+      'At school, where it all started',
+      'At home, on the sofa',
+      'On one of our little trips',
+      'In the car, on the way to somewhere',
+    ],
+    correctIndex: 3,
     memory: {
-      title: 'The beginning',
-      text: 'From school desks to forever — that first hello still makes my heart smile.',
-      // Add a photo path like "/photos/first-meet.jpg" or leave null for a styled placeholder
+      emblem: 'camera',
+      title: 'Our first frame',
+      text: 'In the car, on the way to somewhere. Not planned, not posed — and I still have it saved.',
       photo: null,
     },
   },
   {
     id: 2,
-    question: 'How long have we been together?',
+    question: 'What was our first trip together?',
     options: [
-      'About 2 years',
-      'More than 6 years',
-      'Just 1 year',
-      'Almost 4 years',
+      'Our first beach day',
+      'A little road trip',
+      'The one we planned for weeks',
+      'The one we decided on in a second',
     ],
-    correctIndex: 1,
+    correctIndex: 3,
     memory: {
-      title: 'Our timeline',
-      text: 'More than 6 years of love, laughter, and choosing each other — and still my favorite story.',
+      emblem: 'plane',
+      title: 'Just the two of us',
+      text: 'No planning, no packing list — we just decided and went. The whole world shrank down to you, me, and a bag of snacks.',
       photo: null,
     },
   },
   {
     id: 3,
-    question: 'Which country are you currently working in?',
-    options: ['Sri Lanka', 'Australia', 'Japan', 'Singapore'],
-    correctIndex: 2,
+    question: 'What nickname do I call you the most?',
+    options: ['Babe', 'Sudu', 'My love', 'Manika'],
+    // Trick question — every one of them is right.
+    anyAnswer: true,
     memory: {
-      title: 'Miles apart, hearts together',
-      text: 'Japan may have you for work, but my heart travels with you every day.',
+      emblem: 'bubble',
+      title: 'All of them',
+      text: 'Babe, Sudu, my love, Manika — you answer to all of them, and every one of them means the same thing.',
       photo: null,
     },
   },
   {
     id: 4,
-    question: 'Who is making this special birthday surprise?',
-    options: ['A secret admirer', 'Your fiancé ❤️', 'Your friends', 'Santa Claus'],
+    question: 'What is one word that describes us?',
+    options: ['Home', 'Forever', 'Ours', 'Inevitable'],
+    anyAnswer: true,
+    memory: {
+      emblem: 'infinity',
+      title: 'One word',
+      text: 'Whichever one you picked — I would have picked it too.',
+      photo: null,
+    },
+  },
+  {
+    id: 5,
+    question: 'What is one thing you want us to do together on your next birthday?',
+    options: [
+      'Wake up in the same city',
+      'A trip, just the two of us',
+      'A quiet dinner at home',
+      'Whatever it is — as husband and wife',
+    ],
+    anyAnswer: true,
+    memory: {
+      emblem: 'cake',
+      title: 'Next year',
+      text: 'Hold that thought. Next birthday, it is my job to make it happen.',
+      photo: null,
+    },
+  },
+  {
+    id: 6,
+    question: 'After all these memories, who would you choose again?',
+    options: [
+      'Mmm, let me think about it',
+      'You. Obviously 😌❤️',
+      'Ask me tomorrow',
+      'I plead the fifth',
+    ],
     correctIndex: 1,
     memory: {
-      title: 'Made with love',
-      text: 'Built with late nights, soft music, and so much love — just for you.',
+      emblem: 'rings',
+      title: 'Correct answer, always',
+      text: 'Me. Obviously. 😌❤️ And I would choose you again too — every single time, without thinking about it.',
       photo: null,
     },
   },

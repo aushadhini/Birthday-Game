@@ -152,7 +152,7 @@ export default function SecretLetter() {
 
       <AnimatePresence>
         {open && (
-          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-[60] flex items-center justify-center overflow-y-auto overscroll-contain p-4">
             <motion.button
               type="button"
               aria-label="Close the letter"

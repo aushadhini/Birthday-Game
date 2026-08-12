@@ -31,6 +31,13 @@ export default function App() {
   const [screen, setScreen] = useState(SCREENS.PASSWORD);
   const unlocked = screen !== SCREENS.PASSWORD;
   const { collectedIds, collectedCount, collect, reset } = useCollectibles();
+  // Level 1's playing field — QuestScreen measures its card and publishes the
+  // node plus one slot per object, so the collectibles land around the card
+  // instead of on top of it. Null on every other screen.
+  const [questField, setQuestField] = useState(null);
+  // The storybook letter opens itself on every collect; Level 1 waits for it to
+  // close before it celebrates the finished heart.
+  const [letterOpen, setLetterOpen] = useState(false);
 
   return (
     <div className="app-shell relative min-h-dvh text-rose-ink">
@@ -62,6 +69,8 @@ export default function App() {
               collectedCount={collectedCount}
               collectedIds={collectedIds}
               onUnlock={() => setScreen(SCREENS.LEVEL2)}
+              onField={setQuestField}
+              letterOpen={letterOpen}
             />
           )}
 
@@ -94,6 +103,8 @@ export default function App() {
         collectedIds={collectedIds}
         onCollect={collect}
         onReset={reset}
+        field={screen === SCREENS.LEVEL1 ? questField : null}
+        onLetterOpenChange={setLetterOpen}
       />
     </div>
   );

@@ -1,19 +1,38 @@
-import { useEffect, useMemo, useState } from 'react';
-import { motion } from 'framer-motion';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import FloatingDecorations from './FloatingDecorations';
 import MusicPlayer from './MusicPlayer';
 import CandleBlowOut from './CandleBlowOut';
+import { siteConfig } from '../data/config';
+
+const WISH_BANNER_MS = 7000;
 
 /**
  * Level 3 — Birthday Surprise finale with cake, fireworks, confetti & message.
  */
 export default function FinalSurprise({ onReplay }) {
   const [burstKey, setBurstKey] = useState(0);
+  // The words the whole game has been walking towards. Held back until the last
+  // flame is out, so blowing the candles has a payoff — the letter below stays
+  // readable the whole time either way, so nothing is ever locked behind it.
+  const [wishBanner, setWishBanner] = useState(false);
 
   useEffect(() => {
     const id = setInterval(() => setBurstKey((k) => k + 1), 2800);
     return () => clearInterval(id);
   }, []);
+
+  const handleAllOut = useCallback(() => {
+    setWishBanner(true);
+    setBurstKey((k) => k + 1);
+  }, []);
+
+  // It bows out on its own — nobody should have to dismiss a birthday wish
+  useEffect(() => {
+    if (!wishBanner) return undefined;
+    const id = setTimeout(() => setWishBanner(false), WISH_BANNER_MS);
+    return () => clearTimeout(id);
+  }, [wishBanner]);
 
   const confetti = useMemo(
     () =>
@@ -93,7 +112,7 @@ export default function FinalSurprise({ onReplay }) {
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           className="mb-10 w-full max-w-md"
         >
-          <CandleBlowOut onAllOut={() => setBurstKey((k) => k + 1)} />
+          <CandleBlowOut onAllOut={handleAllOut} />
         </motion.div>
 
         <motion.div
@@ -136,6 +155,76 @@ export default function FinalSurprise({ onReplay }) {
           </button>
         </div>
       </div>
+
+      {/* ─── THE WISH — the moment the last flame goes out ─── */}
+      <AnimatePresence>
+        {wishBanner && (
+          <motion.div
+            className="fixed inset-0 z-[60] flex items-center justify-center px-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            {/* Dark enough to hush the letter behind it — it carries the same
+                words, and two of them at once reads as a printing error — but
+                still thin enough for the fireworks to flash through */}
+            <button
+              type="button"
+              aria-label="Continue"
+              className="absolute inset-0 bg-[#0B1220]/88 backdrop-blur-[7px]"
+              onClick={() => setWishBanner(false)}
+            />
+
+            <div className="pointer-events-none relative text-center">
+              <motion.p
+                className="text-[11px] uppercase tracking-[0.32em] text-rose-accent sm:text-xs"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15, duration: 0.7 }}
+              >
+                Every candle out · Every wish yours
+              </motion.p>
+
+              <motion.h2
+                className="mt-4 font-display text-4xl leading-tight sm:text-6xl"
+                initial={{ opacity: 0, scale: 0.88, filter: 'blur(10px)' }}
+                animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                transition={{ delay: 0.35, duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <span className="text-foil">Happy Birthday,</span>
+                <br />
+                <span className="text-foil">My Love</span>
+              </motion.h2>
+
+              <motion.div
+                className="mx-auto mt-6 h-px bg-gradient-to-r from-transparent via-rose-accent to-transparent"
+                initial={{ width: 0, opacity: 0 }}
+                animate={{ width: '11rem', opacity: 1 }}
+                transition={{ delay: 1.1, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+              />
+
+              <motion.p
+                className="mt-5 font-display text-xl text-soft-rose sm:text-2xl"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.4, duration: 0.9 }}
+              >
+                {siteConfig.recipientName}
+              </motion.p>
+
+              <motion.p
+                className="mt-8 text-[10px] uppercase tracking-[0.22em] text-rose-muted/70"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0, 0.9, 0.5, 0.9] }}
+                transition={{ delay: 2.4, duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+              >
+                Tap anywhere to read your letter
+              </motion.p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

@@ -46,9 +46,15 @@ export default function CandleBlowOut({ onAllOut }) {
 
   useEffect(() => teardown, [teardown]);
 
-  // Fire the celebration once, and close the mic — the moment is over
+  // Fire the celebration once, and close the mic — the moment is over.
+  // The guard is load-bearing, not defensive: onAllOut is typically an inline
+  // arrow, so it's a new identity on every parent render. Without the ref, the
+  // parent re-rendering in response to this call re-runs the effect, which
+  // calls it again — a render loop that never settles.
+  const celebratedRef = useRef(false);
   useEffect(() => {
-    if (!allOut) return;
+    if (!allOut || celebratedRef.current) return;
+    celebratedRef.current = true;
     setWishMade(true);
     setMicState((state) => (state === 'live' ? 'idle' : state));
     teardown();

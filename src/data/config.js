@@ -29,7 +29,7 @@ export const siteConfig = {
   birthYear: 1997,
 
   // Our song — place the mp3 at /public/music/until-i-found-you.mp3
-  musicSrc: '/music/until-i-found-you.mp3',
+  musicSrc: `${import.meta.env.BASE_URL}music/until-i-found-you.mp3`,
   musicTitle: 'Until I Found You',
   musicArtist: 'Stephen Sanchez',
   musicLabel: 'Our Song',

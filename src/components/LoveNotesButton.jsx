@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { loveReasons } from '../data/loveReasons';
 
 /* ─── WEB AUDIO API SYNTHESIZER ─── */
@@ -72,48 +73,49 @@ const playSparkleSound = () => {
 
 /* ─── 29 MAGICAL COLLECTIBLES DATA ─────────────────────────────────────────
    All 29 objects float on Level 1 only — that level is nothing but the hunt.
-   Positions hug the edges of the viewport so the quest card stays readable. */
+
+   Positions are no longer listed here. They used to be a fixed percentage grid,
+   which put half the objects on top of the quest card on a phone (where the
+   card is nearly as wide as the screen). QuestScreen now measures its own card
+   and hands us a slot per object, laid out in the free sky around it — see
+   src/data/collectibleLayout.js. Slot i belongs to the object at index i, so
+   nothing moves as the list shrinks. */
 const COLLECTIBLES_CONFIG = [
-  // Top row
-  { id: 1, name: "Wax-sealed love letter", screen: "level1", top: "4%", left: "5%" },
-  { id: 2, name: "Birthday cake", screen: "level1", top: "4%", left: "19%" },
-  { id: 3, name: "Gift box with ribbon", screen: "level1", top: "4%", left: "33%" },
-  { id: 4, name: "Balloon", screen: "level1", top: "4%", right: "33%" },
-  { id: 5, name: "Sparkles", screen: "level1", top: "4%", right: "19%" },
-  { id: 6, name: "Butterfly", screen: "level1", top: "4%", right: "5%" },
+  { id: 1, name: "Wax-sealed love letter", screen: "level1" },
+  { id: 2, name: "Birthday cake", screen: "level1" },
+  { id: 3, name: "Gift box with ribbon", screen: "level1" },
+  { id: 4, name: "Balloon", screen: "level1" },
+  { id: 5, name: "Sparkles", screen: "level1" },
+  { id: 6, name: "Butterfly", screen: "level1" },
 
-  // Upper side columns
-  { id: 7, name: "Rose", screen: "level1", top: "15%", left: "2%" },
-  { id: 8, name: "Golden key", screen: "level1", top: "15%", left: "15%" },
-  { id: 9, name: "Star", screen: "level1", top: "15%", right: "15%" },
-  { id: 10, name: "Candle", screen: "level1", top: "15%", right: "2%" },
+  { id: 7, name: "Rose", screen: "level1" },
+  { id: 8, name: "Golden key", screen: "level1" },
+  { id: 9, name: "Star", screen: "level1" },
+  { id: 10, name: "Candle", screen: "level1" },
 
-  { id: 11, name: "Tiny crown", screen: "level1", top: "27%", left: "4%" },
-  { id: 12, name: "Lucky clover", screen: "level1", top: "27%", left: "16%" },
-  { id: 13, name: "Crystal heart", screen: "level1", top: "27%", right: "16%" },
-  { id: 14, name: "Moon", screen: "level1", top: "27%", right: "4%" },
+  { id: 11, name: "Tiny crown", screen: "level1" },
+  { id: 12, name: "Lucky clover", screen: "level1" },
+  { id: 13, name: "Crystal heart", screen: "level1" },
+  { id: 14, name: "Moon", screen: "level1" },
 
-  // Middle side columns
-  { id: 15, name: "Shooting star", screen: "level1", top: "39%", left: "2%" },
-  { id: 16, name: "Teddy bear", screen: "level1", top: "39%", left: "14%" },
-  { id: 17, name: "Music note", screen: "level1", top: "39%", right: "14%" },
-  { id: 18, name: "Ribbon", screen: "level1", top: "39%", right: "2%" },
+  { id: 15, name: "Shooting star", screen: "level1" },
+  { id: 16, name: "Teddy bear", screen: "level1" },
+  { id: 17, name: "Music note", screen: "level1" },
+  { id: 18, name: "Ribbon", screen: "level1" },
 
-  { id: 19, name: "Small present tag", screen: "level1", top: "51%", left: "4%" },
-  { id: 20, name: "Celebration confetti", screen: "level1", top: "51%", left: "16%" },
-  { id: 21, name: "Compass", screen: "level1", top: "51%", right: "16%" },
-  { id: 22, name: "Diamond Ring", screen: "level1", top: "51%", right: "4%" },
+  { id: 19, name: "Small present tag", screen: "level1" },
+  { id: 20, name: "Celebration confetti", screen: "level1" },
+  { id: 21, name: "Compass", screen: "level1" },
+  { id: 22, name: "Diamond Ring", screen: "level1" },
 
-  // Lower side columns
-  { id: 23, name: "Anchor", screen: "level1", top: "63%", left: "2%" },
-  { id: 24, name: "Hourglass", screen: "level1", top: "63%", left: "14%" },
-  { id: 25, name: "Magic wand", screen: "level1", top: "63%", right: "14%" },
-  { id: 26, name: "Envelope", screen: "level1", top: "63%", right: "2%" },
+  { id: 23, name: "Anchor", screen: "level1" },
+  { id: 24, name: "Hourglass", screen: "level1" },
+  { id: 25, name: "Magic wand", screen: "level1" },
+  { id: 26, name: "Envelope", screen: "level1" },
 
-  // Bottom row
-  { id: 27, name: "Feathery pen", screen: "level1", top: "88%", left: "8%" },
-  { id: 28, name: "Dove", screen: "level1", top: "88%", left: "45%" },
-  { id: 29, name: "Infinite loop", screen: "level1", top: "88%", right: "8%" }
+  { id: 27, name: "Feathery pen", screen: "level1" },
+  { id: 28, name: "Dove", screen: "level1" },
+  { id: 29, name: "Infinite loop", screen: "level1" }
 ];
 
 /* ─── PREMIUM SVG ILLUSTRATIONS ─── */
@@ -353,9 +355,13 @@ export default function LoveNotesButton({
   collectedIds = [],
   onCollect,
   onReset,
+  field = null, // { node, slots } — the Level 1 playing field, from QuestScreen
+  onLetterOpenChange, // so Level 1 doesn't stack its celebration on the letter
 }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [activePage, setActivePage] = useState(0);
+  // Premium means calm, not relentless — the drift stops if the OS asks it to
+  const reduceMotion = useReducedMotion();
 
   // Unlocking/collecting animation state
   const [collectingId, setCollectingId] = useState(null);
@@ -363,6 +369,11 @@ export default function LoveNotesButton({
 
   // Sound active settings
   const [soundEnabled, setSoundEnabled] = useState(true);
+
+  // Level 1 waits for the letter to be closed before it celebrates
+  useEffect(() => {
+    onLetterOpenChange?.(modalOpen);
+  }, [modalOpen, onLetterOpenChange]);
 
   const handleCollect = (collectible, event) => {
     if (collectedIds.includes(collectible.id)) return;
@@ -406,82 +417,100 @@ export default function LoveNotesButton({
 
   if (!visible) return null;
 
-  // Filter collectibles for the currently active screen that haven't been collected yet
-  const activeScreenCollectibles = COLLECTIBLES_CONFIG.filter(
-    (c) => c.screen === screen && !collectedIds.includes(c.id)
+  // Objects for the current screen that are still out there, each paired with
+  // the slot QuestScreen measured for it. No slot (field not laid out yet, or
+  // we're not on Level 1) means nothing to render.
+  const placedCollectibles = COLLECTIBLES_CONFIG.map((item, index) => ({
+    item,
+    slot: field?.slots?.[index],
+  })).filter(
+    ({ item, slot }) => slot && item.screen === screen && !collectedIds.includes(item.id)
+  );
+
+  const collectibleField = (
+    <AnimatePresence>
+      {placedCollectibles.map(({ item, slot }) => {
+        // Every bubble drifts on its own clock. Long durations and prime-ish
+        // offsets keep any two from falling into step, which is what would
+        // give the whole field away as an animation rather than air currents.
+        const rise = 9 + (item.id % 5) * 2.5; // 9–19px up and back
+        const drift = (item.id % 2 === 0 ? 1 : -1) * (5 + (item.id % 4) * 2.5); // ±5–12px sideways
+        const tilt = 2 + (item.id % 3); // 2–4°, barely there
+        const riseDur = 13 + (item.id % 7) * 1.6; // 13–23s
+        const driftDur = 17 + (item.id % 5) * 2.3; // 17–26s — never a multiple of riseDur
+        const tiltDur = 19 + (item.id % 6) * 1.9;
+        const delay = (item.id % 11) * 0.7; // 0–7s, so they start scattered
+        // Smaller bubbles sit further back: dimmer, softer, less glow.
+        const depth = slot.size / (field.itemSize || slot.size);
+
+        return (
+        <motion.button
+          key={item.id}
+          onClick={(e) => handleCollect(item, e)}
+          title={item.name}
+          aria-label={`Collect the ${item.name.toLowerCase()}`}
+          className="collectible absolute pointer-events-auto z-30 flex items-center justify-center rounded-full border cursor-pointer"
+          style={{
+            // The slot is a centre point; framer owns `transform` for the
+            // float animation, so offset by half the bubble instead of
+            // translating.
+            top: slot.y - slot.size / 2,
+            left: slot.x - slot.size / 2,
+            width: slot.size,
+            height: slot.size,
+            padding: Math.max(4, Math.round(slot.size * 0.2)),
+            borderColor: `rgba(201, 168, 108, ${(0.34 + depth * 0.2).toFixed(2)})`,
+            background: 'radial-gradient(circle at 32% 28%, rgba(30,44,68,0.82) 0%, rgba(11,18,32,0.88) 55%, rgba(9,14,26,0.94) 100%)',
+            boxShadow: `0 0 ${Math.round(14 * depth)}px rgba(201,168,108,${(0.2 + depth * 0.12).toFixed(2)}), inset 0 1px 2px rgba(243,238,230,0.16), inset 0 0 10px rgba(201,168,108,0.1)`,
+            // The drop-shadow is what lifts them off the backdrop — it travels
+            // with the bubble as it drifts, so they read as in the air.
+            filter: `drop-shadow(0 ${Math.round(5 * depth)}px ${Math.round(9 * depth)}px rgba(0,0,0,${(0.32 + depth * 0.16).toFixed(2)}))`,
+            opacity: 0.86 + depth * 0.14,
+          }}
+          initial={{ scale: 0.4, opacity: 0 }}
+          animate={
+            reduceMotion
+              ? { scale: 1, opacity: 1 }
+              : {
+                  scale: 1,
+                  opacity: 1,
+                  y: [0, -rise, 0, rise * 0.45, 0],
+                  x: [0, drift, drift * 0.3, -drift * 0.6, 0],
+                  rotate: [-tilt, tilt * 0.6, -tilt * 0.4, tilt, -tilt],
+                }
+          }
+          exit={{ scale: 0, opacity: 0 }}
+          whileHover={{
+            scale: 1.18,
+            borderColor: 'rgba(201, 168, 108, 0.95)',
+            boxShadow: '0 0 22px rgba(201,168,108,0.6), 0 0 38px rgba(240,168,184,0.28)',
+          }}
+          transition={{
+            y: { duration: riseDur, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut', delay },
+            x: { duration: driftDur, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut', delay: delay * 0.6 },
+            rotate: { duration: tiltDur, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut', delay: delay * 0.4 },
+            scale: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
+            opacity: { duration: 0.5 },
+          }}
+        >
+          {/* Soft glow trail inside */}
+          <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#C9A86C]/5 to-[#F0A8B8]/10 animate-pulse pointer-events-none" />
+
+          <CollectibleIcon id={item.id} />
+
+          {/* Sparkle particle trail — scaled down with the bubble */}
+          <span className="absolute -top-0.5 -right-0.5 text-[6px] text-[#F3EEE6] animate-ping opacity-60">✦</span>
+          <span className="absolute -bottom-0.5 -left-0.5 text-[6px] text-[#F0A8B8] animate-pulse">♥</span>
+        </motion.button>
+        );
+      })}
+    </AnimatePresence>
   );
 
   return (
     <>
-      {/* ─── FLOATING COLLECTIBLES ON THE SCREEN ─── */}
-      <AnimatePresence>
-        {activeScreenCollectibles.map((item) => {
-          // Unique slight speed and rotation for each
-          const rotSeed = (item.id * 13) % 20 - 10; // -10 to 10 deg
-          const durSeed = 6 + (item.id % 5) * 1.5; // 6s to 12s
-          const delaySeed = (item.id % 3) * 0.4;
-          // Deterministic jitter so the layout scatters instead of reading as rows
-          const jitterY = ((item.id * 37) % 17) - 8; // -8 to 8 px
-          const jitterX = ((item.id * 53) % 15) - 7; // -7 to 7 px
-
-          return (
-            <motion.button
-              key={item.id}
-              onClick={(e) => handleCollect(item, e)}
-              title={item.name}
-              aria-label={`Collect the ${item.name.toLowerCase()}`}
-              className="absolute pointer-events-auto z-30 flex h-11 w-11 items-center justify-center rounded-full border p-2 cursor-pointer sm:h-14 sm:w-14"
-              style={{
-                top: `calc(${item.top} + ${jitterY}px)`,
-                left: item.left ? `calc(${item.left} + ${jitterX}px)` : undefined,
-                right: item.right ? `calc(${item.right} + ${jitterX}px)` : undefined,
-                borderColor: 'rgba(201, 168, 108, 0.45)',
-                background: 'radial-gradient(circle, rgba(11,18,32,0.85) 0%, rgba(9,14,26,0.95) 100%)',
-                boxShadow: '0 0 16px rgba(201,168,108,0.25), inset 0 0 12px rgba(201,168,108,0.1)',
-                filter: 'drop-shadow(0 4px 10px rgba(0,0,0,0.4))',
-              }}
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{
-                scale: 1,
-                opacity: 1,
-                y: [0, -12, 0],
-                rotate: [rotSeed, rotSeed + 8, rotSeed - 8, rotSeed],
-              }}
-              exit={{ scale: 0, opacity: 0 }}
-              whileHover={{
-                scale: 1.15,
-                borderColor: 'rgba(201, 168, 108, 0.95)',
-                boxShadow: '0 0 24px rgba(201,168,108,0.65), 0 0 40px rgba(240,168,184,0.3)',
-              }}
-              transition={{
-                y: {
-                  duration: durSeed,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: delaySeed
-                },
-                rotate: {
-                  duration: durSeed * 1.2,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: delaySeed
-                },
-                scale: { duration: 0.3 },
-                opacity: { duration: 0.3 }
-              }}
-            >
-              {/* Soft glow trail inside */}
-              <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#C9A86C]/5 to-[#F0A8B8]/10 animate-pulse pointer-events-none" />
-              
-              <CollectibleIcon id={item.id} />
-
-              {/* Sparkle particle trail */}
-              <span className="absolute -top-1 -right-1 text-[8px] text-[#F3EEE6] animate-ping opacity-60">✦</span>
-              <span className="absolute -bottom-1 -left-1 text-[8px] text-[#F0A8B8] animate-pulse">♥</span>
-            </motion.button>
-          );
-        })}
-      </AnimatePresence>
+      {/* ─── FLOATING COLLECTIBLES, PORTALLED INTO THE LEVEL 1 FIELD ─── */}
+      {field?.node ? createPortal(collectibleField, field.node) : null}
 
       {/* ─── COLLECTION ANIMATION PORTAL LAYER ─── */}
       <AnimatePresence>
@@ -578,7 +607,7 @@ export default function LoveNotesButton({
       {/* ─── ELEGANT JOURNAL/LETTER MODAL ─── */}
       <AnimatePresence>
         {modalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+          <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overscroll-contain p-4 sm:p-6">
             {/* Dark glass backdrop */}
             <motion.button
               type="button"
@@ -630,7 +659,9 @@ export default function LoveNotesButton({
               </div>
 
               {/* Inner content border */}
-              <div className="relative m-4 border border-[#C9A86C]/20 rounded-2xl p-6 sm:p-8 flex flex-col justify-between" style={{ minHeight: '420px' }}>
+              {/* min-height in vh, not a fixed 420px — a landscape phone is
+                  only ~390px tall and the letter was being clipped */}
+              <div className="relative m-4 flex min-h-[300px] flex-col justify-between rounded-2xl border border-[#C9A86C]/20 p-6 sm:min-h-[420px] sm:p-8">
                 
                 {/* Header */}
                 <div className="flex items-center justify-between border-b border-[#C9A86C]/25 pb-3">

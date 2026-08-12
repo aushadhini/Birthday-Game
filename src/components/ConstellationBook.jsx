@@ -13,18 +13,27 @@ import { palette } from '../data/theme';
 const VIEW_W = 200;
 const VIEW_H = 150;
 
-export default function ConstellationBook({ total = 29, collectedIds = [] }) {
+/**
+ * @param showHeader  false for the phone's background constellation, which is
+ *   scenery rather than a readout and shouldn't carry a label.
+ * @param drawStep  seconds of delay per segment. Non-zero makes the outline
+ *   draw itself around the loop instead of all at once — used by the
+ *   completion celebration, where the drawing *is* the moment.
+ */
+export default function ConstellationBook({ total = 29, collectedIds = [], showHeader = true, drawStep = 0 }) {
   const points = useMemo(() => buildHeartPoints(total), [total]);
   const collected = new Set(collectedIds);
 
   return (
     <div className="relative">
-      <div className="mb-2 flex items-baseline justify-between">
-        <p className="text-[10px] uppercase tracking-[0.18em] text-rose-muted">Your constellation</p>
-        <p className="text-[10px] uppercase tracking-[0.18em] text-rose-muted/70">
-          {collectedIds.length === total ? 'Complete' : `${total - collectedIds.length} stars dark`}
-        </p>
-      </div>
+      {showHeader && (
+        <div className="mb-2 flex items-baseline justify-between">
+          <p className="text-[10px] uppercase tracking-[0.18em] text-rose-muted">Your constellation</p>
+          <p className="text-[10px] uppercase tracking-[0.18em] text-rose-muted/70">
+            {collectedIds.length === total ? 'Complete' : `${total - collectedIds.length} stars dark`}
+          </p>
+        </div>
+      )}
 
       <svg
         viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
@@ -70,7 +79,7 @@ export default function ConstellationBook({ total = 29, collectedIds = [] }) {
               strokeLinecap="round"
               initial={{ pathLength: 0, opacity: 0 }}
               animate={{ pathLength: 1, opacity: 0.85 }}
-              transition={{ duration: 0.8, ease: 'easeOut' }}
+              transition={{ duration: 0.8, ease: 'easeOut', delay: index * drawStep }}
               style={{ filter: 'drop-shadow(0 0 2px rgba(224,196,138,0.8))' }}
             />
           );
@@ -92,8 +101,13 @@ export default function ConstellationBook({ total = 29, collectedIds = [] }) {
                   initial={{ opacity: 0, scale: 0.3 }}
                   animate={{ opacity: [0.35, 0.7, 0.35], scale: 1 }}
                   transition={{
-                    opacity: { duration: 3 + (index % 4), repeat: Infinity, ease: 'easeInOut' },
-                    scale: { duration: 0.5, ease: 'backOut' },
+                    opacity: {
+                      duration: 3 + (index % 4),
+                      repeat: Infinity,
+                      ease: 'easeInOut',
+                      delay: index * drawStep,
+                    },
+                    scale: { duration: 0.5, ease: 'backOut', delay: index * drawStep },
                   }}
                 />
               )}
