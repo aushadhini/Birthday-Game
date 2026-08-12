@@ -12,7 +12,7 @@ export const siteConfig = {
   heroGreeting: 'Well hello,',
   heroTitle: 'Birthday Boy',
   recipientName: 'Adeesha',
-  creatorName: 'Your fiancé',
+  creatorName: 'N',
 
   // Password shown before entering the experience (case-insensitive).
   // Tip: use your special date, e.g. "14-08" or "ourday".

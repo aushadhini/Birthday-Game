@@ -104,15 +104,23 @@ export default function FinalSurprise({ onReplay }) {
       </div>
 
       <div className="relative z-10 mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center px-6 py-16 text-center">
-        {/* The cake — the candles can be blown out with real breath */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          className="mb-10 w-full max-w-md"
-        >
-          <CandleBlowOut onAllOut={handleAllOut} />
-        </motion.div>
+        {/* The cake — the candles can be blown out with real breath. Once the
+            letter is unwrapped the cake bows out, so the words have the screen
+            to themselves */}
+        <AnimatePresence>
+          {!letterOpen && (
+            <motion.div
+              key="cake"
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -16, transition: { duration: 0.5 } }}
+              transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+              className="mb-10 w-full max-w-md"
+            >
+              <CandleBlowOut onAllOut={handleAllOut} />
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <AnimatePresence>
           {letterOpen && (
