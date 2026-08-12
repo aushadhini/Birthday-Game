@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import PasswordGate from './components/PasswordGate';
 import WelcomeScreen from './components/WelcomeScreen';
@@ -29,11 +29,12 @@ const SCREENS = {
   GALLERY: 'gallery',
 };
 
-/* Where the phone's back button goes from each level. The gallery and the finale
-   are left out — both already carry their own way out. */
+/* Where the phone's back button goes from each screen. The finale is left out —
+   its own "Play it again" is the way out. */
 const BACK_TO = {
   [SCREENS.LEVEL1]: { screen: SCREENS.WELCOME, label: 'Back' },
   [SCREENS.LEVEL2]: { screen: SCREENS.LEVEL1, label: 'Level 1' },
+  [SCREENS.GALLERY]: { screen: SCREENS.WELCOME, label: 'Back' },
 };
 
 export default function App() {
@@ -41,6 +42,13 @@ export default function App() {
   const unlocked = screen !== SCREENS.PASSWORD;
   const isPhone = useIsPhone();
   const back = BACK_TO[screen];
+
+  // Every screen starts at the top. Clicking a button near the bottom of one
+  // screen leaves the page scrolled, and the next screen inherited that offset —
+  // which slid the gallery's heading up underneath the fixed ✦ in the corner.
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }, [screen]);
   const { collectedIds, collectedCount, collect, reset } = useCollectibles();
   // Level 1's playing field — QuestScreen measures its card and publishes the
   // node plus one slot per object, so the collectibles land around the card
@@ -94,7 +102,7 @@ export default function App() {
           )}
 
           {screen === SCREENS.GALLERY && (
-            <PhotoGallery onBack={() => setScreen(SCREENS.WELCOME)} />
+            <PhotoGallery onBack={() => setScreen(SCREENS.WELCOME)} inlineBack={!isPhone} />
           )}
         </motion.div>
       </AnimatePresence>

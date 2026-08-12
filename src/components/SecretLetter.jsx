@@ -7,8 +7,9 @@ import { palette } from '../data/theme';
  * The hidden one.
  *
  * Type their name anywhere in the game (or long-press the ✦ in the corner on a
- * phone) and a wax-sealed letter cracks open. It stays "opened" in
- * localStorage, so afterwards a small seal appears in the corner to re-read it.
+ * phone) and a wax-sealed letter cracks open. Being found is remembered in
+ * localStorage, but only to make a plain tap enough to re-read it — the ✦ itself
+ * never changes, so the secret stays a secret.
  */
 const STORAGE_KEY = 'birthday_secret_letter_found_v1';
 const LONG_PRESS_MS = 700;
@@ -112,20 +113,17 @@ export default function SecretLetter() {
         onContextMenu={(e) => e.preventDefault()}
         onClick={handleClick}
         aria-label={found ? 'Re-read the secret letter' : 'A hidden corner — press and hold it'}
-        className="fixed left-4 top-4 z-40 flex h-9 w-9 items-center justify-center rounded-full transition sm:left-6 sm:top-6"
-        style={{
-          border: found ? `1px solid ${palette.gold}` : '1px solid transparent',
-          background: found ? 'rgba(11,18,32,0.8)' : 'transparent',
-          boxShadow: found ? `0 0 14px ${palette.gold}55` : 'none',
-        }}
+        className="fixed left-4 top-4 z-40 flex h-9 w-9 items-center justify-center rounded-full border border-transparent bg-transparent transition sm:left-6 sm:top-6"
       >
-        {/* Before it's found: a faint gold breath, just enough to be spotted
-            once the welcome screen hints at it. After: a solid wax seal. */}
+        {/* Always the same faint gold breath — never a lit-up seal. Finding it
+            once used to turn it into a bordered gold badge, which handed the
+            secret away on every screen from then on. It stays a secret: the
+            same barely-there ✦, which opens on a tap once it's been found. */}
         <motion.span
           className="select-none text-sm"
-          style={{ color: found ? palette.goldGlow : palette.gold }}
-          animate={found ? { opacity: 1 } : { opacity: [0.28, 0.6, 0.28] }}
-          transition={found ? undefined : { duration: 3.4, repeat: Infinity, ease: 'easeInOut' }}
+          style={{ color: palette.gold }}
+          animate={{ opacity: [0.28, 0.6, 0.28] }}
+          transition={{ duration: 3.4, repeat: Infinity, ease: 'easeInOut' }}
         >
           ✦
         </motion.span>

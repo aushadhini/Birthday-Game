@@ -6,7 +6,12 @@ import { memories } from '../data/memories';
  * Memory gallery — midnight romantic presentation.
  * Add photos via src/data/memories.js and /public/photos/
  */
-export default function PhotoGallery({ onBack }) {
+/**
+ * @param inlineBack false on phones, where the floating back pill in the top
+ *   strip is the way out. The inline "← Back" used to sit right under the secret
+ *   ✦ in the corner, with the two overlapping.
+ */
+export default function PhotoGallery({ onBack, inlineBack = true }) {
   // Photos not added to /public/photos/ yet fall back to the gradient card.
   const [missing, setMissing] = useState([]);
 
@@ -14,14 +19,20 @@ export default function PhotoGallery({ onBack }) {
     <section className="relative min-h-dvh overflow-hidden">
       <div className="pointer-events-none absolute inset-0 bg-hero-glow" aria-hidden />
 
-      <div className="relative z-10 mx-auto max-w-5xl px-5 py-10 sm:px-8">
-        <button
-          type="button"
-          onClick={onBack}
-          className="mb-8 text-sm text-rose-muted transition hover:text-rose-accent"
-        >
-          ← Back
-        </button>
+      <div
+        className={`relative z-10 mx-auto max-w-5xl px-5 pb-10 sm:px-8 sm:pt-10 ${
+          inlineBack ? 'pt-10' : 'pt-16'
+        }`}
+      >
+        {inlineBack && (
+          <button
+            type="button"
+            onClick={onBack}
+            className="mb-8 text-sm text-rose-muted transition hover:text-rose-accent"
+          >
+            ← Back
+          </button>
+        )}
 
         <motion.div
           initial={{ opacity: 0, y: 12 }}
